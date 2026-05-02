@@ -1,0 +1,26 @@
+name: Playwright Account Factory
+on:
+  workflow_dispatch:
+    inputs:
+      platform:
+        description: 'Platform'
+        default: 'telegram'
+      amount:
+        description: 'Amount'
+        default: '50'
+
+jobs:
+  run-factory:
+    runs-on: self-hosted
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Dependencies
+        run: |
+          pip install playwright requests
+          playwright install chromium
+          playwright install-deps
+      - name: Execute
+        env:
+          FIVESIM_API_KEY: ${{ secrets.FIVESIM_API_KEY }}
+          DATAIMPULSE_PROXY: ${{ secrets.DATAIMPULSE_PROXY }}
+        run: python3 main.py --platform ${{ github.event.inputs.platform }} --amount ${{ github.event.inputs.amount }}
